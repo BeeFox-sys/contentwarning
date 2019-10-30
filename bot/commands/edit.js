@@ -5,7 +5,7 @@ const schemas = require('../schemas.js');
 const message = mongoose.model('messages', schemas.message)
 
 module.exports = {
-	name: 'editcw',
+	name: 'edit-cw',
 	aliases: ["edit"],
 	description: 'Edits a users trigger message. Reqires the message ID to edit, a light, moderate, or heavy option, and a edited message.\nUsage: edit <message id> <light/moderate/heavy> <Trigger>\nExample: edit 12345679872538 heavy Creepy Crawlies with teeth',
     hidden: false,

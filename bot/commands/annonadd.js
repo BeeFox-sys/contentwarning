@@ -5,7 +5,7 @@ const schemas = require('../schemas.js');
 const message = mongoose.model('messages', schemas.message)
 
 module.exports = {
-	name: 'anonymouscw',
+	name: 'anon-cw',
 	aliases: ["anon","aadd"],
 	description: 'Adds a cw anonymously. Reqires a light, moderate, or heavy option.\nUsage: add <light/moderate/heavy> <Trigger>\nExample: add mild Creepy crawlies',
     hidden: false,

@@ -5,7 +5,7 @@ const schemas = require('../schemas.js');
 const message = mongoose.model('messages', schemas.message)
 
 module.exports = {
-	name: 'addcw',
+	name: 'add-cw',
 	aliases: ["add"],
 	description: 'Adds a cw for the user. Reqires a light, moderate, or heavy option, and a message describing the trigger.\nUsage: add <light/moderate/heavy> <Trigger>\nExample: add mild Creepy crawlies',
     hidden: false,

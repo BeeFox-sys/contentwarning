@@ -5,7 +5,7 @@ const schemas = require('../schemas.js');
 const message = mongoose.model('messages', schemas.message)
 
 module.exports = {
-	name: 'deletecw',
+	name: 'delete-cw',
 	aliases: ["delete"],
 	description: 'Deletes a users trigger message. Reqires the message ID to delete.\nUsage: delete <message id> \nExample: delete 2973362791',
     hidden: false,
