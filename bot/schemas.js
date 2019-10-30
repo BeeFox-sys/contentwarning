@@ -7,6 +7,7 @@ module.exports = {
     _id: String,
     prefix: { type: String, default: config.defaultPrefix },
     channel: String,
+    alertChannel: String,
     hideCW: { type: Boolean, default:true},
     allowAnon: { type: Boolean, default:true},
     enableFilter: Boolean,

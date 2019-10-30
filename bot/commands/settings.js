@@ -25,8 +25,9 @@ Please select an option below by sending a message with the number or name
 \`\`\`markdown
 1: Prefix
 2: CW Channel
-3: Force Spoiler CW
-4: Allow Anonymous CW
+3: Log Channel
+4: Force Spoiler CW
+5: Allow Anonymous CW
 
 0: Cancel
 \`\`\``	
@@ -47,10 +48,14 @@ Please select an option below by sending a message with the number or name
 						return cwChannel(client, msg, args)
 
 					case "3":
+					case "log channel":
+						return logChannel(client,msg,args)
+
+					case "4":
 					case "force spoiler cw":
 						return hideCw(client, msg, args)
 
-					case "4":
+					case "5":
 					case "allow anonymous cw":
 						return anonCw(client, msg, args)
 					
@@ -112,6 +117,40 @@ async function cwChannel(client, msg, args){
 						await msg.guild.settings.save(async (err, newDoc)=>{
 							if (err) return utils.errorHandeler(error)
 							return await msg.channel.send(`New cw channel set to <#${newDoc.channel}>`)
+						  });
+				}
+			})
+			.catch(error=>{
+				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
+				utils.errorHandeler(error,msg)
+			})
+}
+
+async function logChannel(client, msg, args){
+	msg.channel.send("Please input a new channel for logs, `clear` to remove it, or `cancel` to leave it as is")
+	await msg.channel.awaitMessages(message=>message.member.id===msg.member.id, { time: 60000, max: 1, errors: ['time'] })
+			.then(async response => {
+				switch (response.first().content.toLowerCase()) {
+					case "cancel":
+						return await msg.channel.send("Canceled Operation");
+
+					case "clear":
+						msg.guild.settings.alertChannel = null
+						return await msg.guild.settings.save(async (err, newDoc)=>{
+							if (err) return utils.errorHandeler(error)
+							return await msg.channel.send(`Channel Cleared`)
+							});
+				
+					default:
+						channel = await response.first().mentions.channels.first()
+						
+						if(channel == undefined){
+							return await msg.channel.send("Sorry! That isn't a valid channel. Please mention a channel!")
+						}
+						msg.guild.settings.alertChannel = channel.id
+						await msg.guild.settings.save(async (err, newDoc)=>{
+							if (err) return utils.errorHandeler(error)
+							return await msg.channel.send(`New log channel set to <#${newDoc.channel}>`)
 						  });
 				}
 			})
