@@ -8,7 +8,7 @@ module.exports = {
     hidden: false,
 	perms: ["MANAGE_GUILD"],
 	guild: true,
-	catagory: "Mod Commands",
+	catagory: "Automod",
 	async execute(client, msg, args) {
 		if(args.length < 2){
 			return await msg.channel.send("Current Global Blacklist:\n"+msg.guild.settings.globalBlacklist.map(e => e.peram).join("\n"))
