@@ -8,6 +8,7 @@ module.exports = {
     hidden: false,
 	perms: null,
 	guild: false,
+	catagory: "Misc",
 	async execute(client, msg, args) {
 		if(msg.attachments.size < 1){
 			return 

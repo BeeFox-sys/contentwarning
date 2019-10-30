@@ -11,6 +11,7 @@ module.exports = {
     hidden: false,
 	perms: null,
 	guild: false,
+	catagory: "Trigger List",
 	async execute(client, msg, args) {
 		if(args.length < 1){
 			return msg.reply("You need to supply a mesage id",{disableEveryone:true})

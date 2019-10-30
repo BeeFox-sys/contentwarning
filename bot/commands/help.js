@@ -8,6 +8,7 @@ module.exports = {
 	hidden: false,
 	perms: null,
 	guild: false,
+	catagory: "Misc",
 	async execute(client, msg, args) {
 		try{
 		if(args.length > 0){
@@ -17,11 +18,23 @@ module.exports = {
 				return await msg.channel.send(`**${command.name}**${command.aliases ? " *"+command.aliases.join(", ")+"*" : ""}:\n${command.description}`)
 			}
 		}
-		commands = ""
+		commands = {
+		}
 		client.commands
 		.filter(command => !command.hidden)
-		.tap(command => commands += `\n${(msg.guild) ? msg.guild.settings.prefix : ""}**${command.name}**`);
-		return await msg.channel.send(`A list of commands:${commands}`)
+		.tap(command => {
+			if(!commands[command.catagory])commands[command.catagory]=""
+			commands[command.catagory] += `\n${(msg.guild) ? msg.guild.settings.prefix : ""}**${command.name}**`
+		});
+		helpMessage = ""
+		for (const catagory in commands) {
+			if (commands.hasOwnProperty(catagory)) {
+				const element = commands[catagory];
+				helpMessage += `\n__${catagory}__${commands[catagory]}\n`
+			}
+		}
+		helpMessage += `You can use ${(msg.guild) ? msg.guild.settings.prefix : ""}help [command] to see more detailed information on a command`
+		return await msg.channel.send(helpMessage)
 		}
 		catch(error){
 			throw error

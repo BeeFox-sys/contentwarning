@@ -8,6 +8,7 @@ module.exports = {
     hidden: false,
 	perms: null,
 	guild: false,
+	catagory: "Misc",
 	async execute(client, msg, args) {
 		return await msg.channel.send(client.config.about)
 	},

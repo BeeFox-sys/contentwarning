@@ -8,6 +8,7 @@ module.exports = {
 	hidden: false,
 	perms: ["MANAGE_GUILD"],
 	guild: true,
+	catagory: "Mod Commands",
 	async execute(client, msg, args) {
 		try{
 			mainMenu(client, msg, args)

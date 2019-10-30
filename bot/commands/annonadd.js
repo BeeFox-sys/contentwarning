@@ -11,6 +11,7 @@ module.exports = {
     hidden: false,
 	perms: null,
 	guild: true,
+	catagory: "Trigger List",
 	async execute(client, msg, args) {
 		await msg.delete()
 		if(!msg.guild.settings.channel){
