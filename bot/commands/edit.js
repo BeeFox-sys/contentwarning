@@ -33,7 +33,7 @@ module.exports = {
 			.setAuthor(cwMessage.embeds[0].author.name,msg.author.displayAvatarURL)
 			.setDescription(`||${trigger}||`)
 			.setColor(client.config.colours[mode])
-			.setFooter(`${modeName} trigger | ${msg.author.username}#${msg.author.discriminator}(${msg.author.id})`)
+			.setFooter(`${modeName} trigger | ${msg.author.username}#${msg.author.discriminator}`)
 		await cwMessage.edit(embed)
 		return msg.channel.send(`Successfully edited the message!`,new Discord.RichEmbed().setDescription(`[Jump to message](${cwMessage.url})`))
 	},
