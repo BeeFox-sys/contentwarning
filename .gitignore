@@ -1,0 +1,6 @@
+config.*
+template/
+node_modules/
+backup/
+ignore.*
+.vscode

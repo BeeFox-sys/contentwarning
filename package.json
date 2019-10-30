@@ -1,0 +1,14 @@
+{
+  "name": "discord-boiler",
+  "version": "1.0.0",
+  "description": "A discord bot boilerplate",
+  "main": "bot/main.js",
+  "scripts": {
+    "start": "node bot/main.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "discord.js": "^11.5.0",
+    "mongoose": "^5.5.11"
+  }
+}

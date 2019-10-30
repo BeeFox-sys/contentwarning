@@ -1,0 +1,7 @@
+{
+  "defaultPrefix": ">>",
+  "token": "TOKEN",
+  "db": "mongodb://localhost/BOTNAME",
+  "owner": {"id":"USERID", "name":"USERNAME"},
+  "logChannel": "CHANNELID"
+}
