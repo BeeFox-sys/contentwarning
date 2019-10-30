@@ -10,14 +10,14 @@ module.exports = {
 	guild: false,
 	async execute(client, msg, args) {
 		if(msg.attachments.size < 1){
-			return await msg.channel.send("You need to include an attachment!")
+			return 
 		}
-		msg.delete()
 		attachments = []
 		msg.attachments.forEach(attachment => {
 			atc = new Discord.Attachment(attachment.url, "SPOILER_"+attachment.filename)
 			attachments.push(atc)
 		});
-		msg.channel.send(`<@!${msg.author.id}>: ${args.join(" ")}`,{files:attachments, disableEveryone:!(msg.member.hasPermission("MENTION_EVERYONE"))})
+		await msg.channel.send(`<@!${msg.author.id}>: ${args.join(" ")}`,{files:attachments, disableEveryone:!(msg.member.hasPermission("MENTION_EVERYONE"))})
+		await msg.delete()
 	},
 };
