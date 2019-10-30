@@ -7,6 +7,8 @@ const fs = require('fs')
 const client = new Discord.Client();
 client.config = require('../config.json');
 
+blacklist = require('./blacklist.js')
+
 
 //load db
 mongoose.connect(client.config.db, {
@@ -62,7 +64,6 @@ client
     .on("message", async (msg)=>{
         try {
             if (msg.author.bot) return
-            // if(msg.channel.type !== 'text') return msg.channel.send("I only work in servers!")
             msg.content = msg.content.replace(/[\u200B-\u200D\uFEFF]/g, '')
             if(msg.channel.type == 'text'){
                 msg.guild.settings = await utils.getGuild(msg.guild.id)
@@ -74,6 +75,7 @@ client
             } else if(msg.channel.type !== 'text'){
 
             } else {
+                blacklist.execute(client, msg)
                 return;
             }
             args = msg.content.split(" ")
@@ -108,6 +110,8 @@ client
             utils.errorHandeler(error,msg)
         }
     })
+
+    
 
     client.on('raw', async event => {
         if(event.t !="MESSAGE_DELETE")return
