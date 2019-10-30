@@ -18,7 +18,12 @@ module.exports = {
 				return await msg.channel.send(`**${command.name}**${command.aliases ? " *"+command.aliases.join(", ")+"*" : ""}:\n${command.description}`)
 			}
 		}
+		//Change command order by editing here
 		commands = {
+			"Trigger List":null,
+			"Misc":null,
+			"Automod":null,
+			"Mod Commands":null,
 		}
 		client.commands
 		.filter(command => !command.hidden)
