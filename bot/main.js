@@ -7,9 +7,6 @@ const fs = require('fs')
 const client = new Discord.Client();
 client.config = require('../config.json');
 
-blacklist = require('./blacklist.js')
-
-
 //load db
 mongoose.connect(client.config.db, {
     useNewUrlParser: true,
@@ -32,6 +29,9 @@ for (const file of commandFiles) {
   const command = require(`./commands/${file}`);
   client.commands.set(command.name, command);
 }
+
+blacklist = require('./blacklist.js')
+levels = require('./levels.js')
 
 client
     .on('ready', async () => {
@@ -65,8 +65,11 @@ client
         try {
             if (msg.author.bot) return
             msg.content = msg.content.replace(/[\u200B-\u200D\uFEFF]/g, '')
+            msg.user = await utils.getUser(msg.author.id)
             if(msg.channel.type == 'text'){
                 msg.guild.settings = await utils.getGuild(msg.guild.id)
+                msg.channel.settings = await utils.getChannel(msg.channel.id)
+                levels.execute(client,msg)
             }
             if (msg.channel.type == 'text' && msg.content.startsWith(msg.guild.settings.prefix)){
                 msg.content = msg.content.substr(msg.guild.settings.prefix.length).trim()

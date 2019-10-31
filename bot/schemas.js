@@ -11,20 +11,27 @@ module.exports = {
     hideCW: { type: Boolean, default:true},
     allowAnon: { type: Boolean, default:true},
     enableFilter: Boolean,
-    globalBlacklist: [{regex:Boolean,peram:String}]
+    globalBlacklist: [{regex:Boolean,peram:String}],
+    enableLevels: {type:Boolean,default:true}
   }),
   channel: new mongoose.Schema({
     _id: String,
     enableGlobal: {type:Boolean,default:true},
     localBlacklist: [{regex:Boolean,peram:String}],
-    localWhitelist: [Boolean]
+    localWhitelist: [Boolean],
+    enableLevels: {type:Boolean,default:true}
   }),
   user: new mongoose.Schema({
     _id: String,
     messages: [String],
-    light: String,
-    moderate: String,
-    heavy: String
+    guilds: {
+      type: Map,
+      of: {
+        experience: Number,
+        level: Number,
+        lastExp: {type: Date, default: new Date(0)}
+      }
+    }
   }),
   message: new mongoose.Schema({
     _id: String,

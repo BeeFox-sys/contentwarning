@@ -22,14 +22,21 @@ async function mainMenu(client, msg, args){
 	msg.channel.send(
 `**Settings Menu**
 Please select an option below by sending a message with the number or name
-\`\`\`markdown
-1: Prefix
-2: CW Channel
-3: Log Channel
-4: Force Spoiler CW
-5: Allow Anonymous CW
+\`\`\`md
+[1]: Prefix
+# Allows you to change the bot prefix
+[2]: CW Channel
+# Sets the channel where content warnings go, or disables them
+[3]: Log Channel
+# Sets the log channel where any information that moderators need to see goes
+[4]: Force Spoiler CW
+# Enable/Disable Forcing all CWs to be in spoiler tags
+[5]: Allow Anonymous CW
+# Enable/Disable members ability to anonymously submit CWs to the CW channel
+[6]: Enable/Disable leveling
+# Enables/Disables the leveling system, when disabled all xp collection is paused
 
-0: Cancel
+[0]: Cancel
 \`\`\``	
 	)
 	await msg.channel.awaitMessages(message=>message.member.id===msg.member.id, { time: 60000, max: 1, errors: ['time'] })
@@ -58,6 +65,10 @@ Please select an option below by sending a message with the number or name
 					case "5":
 					case "allow anonymous cw":
 						return anonCw(client, msg, args)
+
+					case "6":
+					case "enable/disable leveling":
+						return levels(client, msg, args)
 					
 					default:
 						await msg.channel.send("That's not an option");
@@ -210,6 +221,37 @@ async function anonCw(client, msg, args){
 						return await msg.guild.settings.save(async (err, newDoc)=>{
 							if (err) return utils.errorHandeler(error)
 							return await msg.channel.send(`Disabled anonymous CWs`)
+							});
+				
+					default:
+						break;
+				}
+			})
+			.catch(error=>{
+				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
+				utils.errorHandeler(error,msg)
+			})
+}
+
+async function levels(client, msg, args){
+	message = await msg.channel.send("Please select an option. ✅ will enable the levels system. ❌ will disable it. Default is ✅")
+	await message.react("✅")
+	await message.react("❌")
+	await message.awaitReactions((reaction, user)=>{return (user.id==msg.author.id&&(reaction.emoji.name == "✅"||reaction.emoji.name == "❌"))}, { time: 60000, max: 1, errors: ['time'] })
+			.then(async response => {
+				switch (response.first().emoji.name) {
+					case "✅":
+						msg.guild.settings.enableLevels = true
+						return await msg.guild.settings.save(async (err, newDoc)=>{
+							if (err) return utils.errorHandeler(error)
+							return await msg.channel.send(`Level system enabled`)
+							});
+
+					case "❌":
+						msg.guild.settings.enableLevels = false
+						return await msg.guild.settings.save(async (err, newDoc)=>{
+							if (err) return utils.errorHandeler(error)
+							return await msg.channel.send(`Level system disabled`)
 							});
 				
 					default:

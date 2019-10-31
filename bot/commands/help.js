@@ -21,13 +21,24 @@ module.exports = {
 		//Change command order by editing here
 		commands = {
 			"Trigger List":null,
+			"Levels":null,
 			"Misc":null,
 			"Automod":null,
 			"Mod Commands":null,
 		}
+		if(msg.channel.type == "text" && !msg.guild.settings.channel) delete commands["Trigger List"]
+		if(msg.channel.type == "text" && !msg.guild.settings.enableLevels) delete commands["Levels"]
+		if(msg.channel.type == "text" && !msg.member.hasPermissions("MANAGE_GUILD")) {
+			delete commands["Automod"]
+			delete commands["Mod Commands"]
+		}
+	
+
 		client.commands
 		.filter(command => !command.hidden)
+		.filter(command => !(command.guild && msg.channel.type != "text"))
 		.tap(command => {
+			if(!commands.hasOwnProperty(command.catagory)) return 
 			if(!commands[command.catagory])commands[command.catagory]=""
 			commands[command.catagory] += `\n${(msg.guild) ? msg.guild.settings.prefix : ""}**${command.name}**`
 		});
@@ -35,10 +46,12 @@ module.exports = {
 		for (const catagory in commands) {
 			if (commands.hasOwnProperty(catagory)) {
 				const element = commands[catagory];
-				helpMessage += `\n__${catagory}__${commands[catagory]}\n`
+				if(element != null) {
+				helpMessage += `\n__${catagory}__${commands[catagory]}`
+				}
 			}
 		}
-		helpMessage += `You can use ${(msg.guild) ? msg.guild.settings.prefix : ""}help [command] to see more detailed information on a command`
+		helpMessage += `\n\nYou can use ${(msg.guild) ? msg.guild.settings.prefix : ""}help [command] to see more detailed information on a command`
 		return await msg.channel.send(helpMessage)
 		}
 		catch(error){
