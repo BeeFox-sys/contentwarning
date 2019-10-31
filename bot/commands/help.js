@@ -22,6 +22,7 @@ module.exports = {
 		commands = {
 			"Trigger List":null,
 			"Levels":null,
+			"Calming":null,
 			"Misc":null,
 			"Automod":null,
 			"Mod Commands":null,
