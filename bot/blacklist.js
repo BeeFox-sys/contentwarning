@@ -10,7 +10,7 @@ module.exports.execute = async (client, msg) => {
                     embed = new Discord.RichEmbed()
                         .setAuthor(msg.author.username+"#"+msg.author.discriminator,msg.author.displayAvatarURL)
                         .setColor(client.config.colours.heavy)
-                        .setDescription(`Message deleted due to use of a banned word.\nWord: ${e}\n>>> ${msg.content.replace(new RegExp(e,"gi"),"**$&**")}`)
+                        .setDescription(`Message deleted due to use of a banned word or phrase.\nWord/Phrase: ${e}\n>>> ${msg.content.replace(new RegExp(e,"gi"),"**$&**")}`)
                         .setFooter(`User ID: ${msg.author.id}`)
                     await client.channels.get(msg.guild.settings.alertChannel).send(embed)
                 }
