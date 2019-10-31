@@ -12,6 +12,7 @@ module.exports.execute = async (client, msg) => {
     }
     data = msg.user.guilds.get(msg.guild.id)
     maxXP = 3
+    cooldown = 5
     if(add_minutes(data.lastExp,cooldown) >= new Date()) return
     exp = data.experience+Math.floor(Math.random()*maxXP)+1
     msg.user.guilds.set(msg.guild.id, {
