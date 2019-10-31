@@ -48,6 +48,14 @@ module.exports = {
 			type:mode
 		}).save((err, newDoc)=>{
 			if (err) return console.error(err)
+			if(msg.guild.settings.alertChannel){
+				embed = new Discord.RichEmbed()
+					.setAuthor(msg.author.tag,msg.author.displayAvatarURL)
+					.setColor(client.config.colours.moderate)
+					.setDescription(`Added an anonymous trigger. [Jump to message](${cwmsg.url})`)
+					.setFooter(`User ID: ${msg.author.id}`)
+				await client.channels.get(msg.guild.settings.alertChannel).send(embed)
+			}
 			return msg.channel.send(`Successfully added to <#${msg.guild.settings.channel}>`,new Discord.RichEmbed().setDescription(`[Jump to message](${cwmsg.url})`))
 		  })
 	},

@@ -11,6 +11,7 @@ module.exports.execute = async (client, msg) => {
                         .setAuthor(msg.author.username+"#"+msg.author.discriminator,msg.author.displayAvatarURL)
                         .setColor(client.config.colours.heavy)
                         .setDescription(`Message deleted due to use of a banned word.\nWord: ${e}\n>>> ${msg.content.replace(new RegExp(e,"gi"),"**$&**")}`)
+                        .setFooter(`User ID: ${msg.author.id}`)
                     await client.channels.get(msg.guild.settings.alertChannel).send(embed)
                 }
                 await msg.author.send(`Your message was deleted because it contained the string **${e}**\n>>> ${msg.content.replace(new RegExp(e,"gi"),"**$&**")}`)
