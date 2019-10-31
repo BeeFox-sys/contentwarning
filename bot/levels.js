@@ -11,11 +11,14 @@ module.exports.execute = async (client, msg) => {
         })
     }
     data = msg.user.guilds.get(msg.guild.id)
-    if(add_minutes(data.lastExp,5) >= new Date()) return
-    exp = data.experience+Math.floor(Math.random()*3)+1
+    cooldown = 5
+    maxXP = 3
+    if(add_minutes(data.lastExp,cooldown) >= new Date()) return
+    exp = data.experience+Math.floor(Math.random()*maxXP)+1
+    hour = (cooldown/60) * (maxXP+1/2)
     msg.user.guilds.set(msg.guild.id, {
         experience: exp,
-        level: Math.floor(Math.log10((exp/100)+1)*20),
+        level: Math.floor((2/3)*(Math.pow(hour, 1/10)^3)*(hour&2)),
         lastExp: new Date()
     })
     msg.user.save()
