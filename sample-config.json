@@ -8,5 +8,8 @@
     "light":"#33e488",
     "moderate":"#FFCD11",
     "heavy":"#FF4454"
-  }
+  },
+  "about":"A bot created by me",
+  "catAPI":"https://thecatapi.com/ <= Get api key here",
+  "dogAPI":"https://thedogapi.com/ <= Get api key here"
 }
