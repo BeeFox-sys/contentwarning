@@ -46,7 +46,7 @@ module.exports = {
 			channel:cwmsg.channel.id,
 			anon:false,
 			type:mode
-		}).save((err, newDoc)=>{
+		}).save(async (err, newDoc)=>{
 			if (err) return console.error(err)
 			if(msg.guild.settings.alertChannel){
 				embed = new Discord.RichEmbed()
