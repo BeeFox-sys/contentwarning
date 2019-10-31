@@ -29,7 +29,7 @@ module.exports = {
 		}
 		if(msg.channel.type == "text" && !msg.guild.settings.channel) delete commands["Trigger List"]
 		if(msg.channel.type == "text" && !msg.guild.settings.enableLevels) delete commands["Levels"]
-		if(msg.channel.type == "text" && !msg.member.hasPermissions("MANAGE_GUILD")) {
+		if(msg.channel.type == "text" && !msg.member.hasPermission("MANAGE_GUILD")) {
 			delete commands["Automod"]
 			delete commands["Mod Commands"]
 		}
