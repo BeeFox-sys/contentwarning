@@ -1,8 +1,8 @@
-const Discord = require('discord.js');
-const utils = require('../../utils.js');
+
 const mongoose = require('mongoose');
 const schemas = require('../../schemas.js');
 const message = mongoose.model('messages', schemas.message)
+const { errorHandler } = require('../../utils')
 
 module.exports = {
 	name: 'delete-cw',
@@ -22,7 +22,7 @@ module.exports = {
 		cwMessage = await client.channels.get(cwMessageData.channel).fetchMessage(id)
 		await cwMessage.delete()
 		return await message.deleteOne({_id:id}, (err)=>{
-			if (err) return console.error(err)
+			if (err) return errorHandler(err,msg)
 			return msg.channel.send(`Successfully deleted the message!`)
 		})
 		

@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const utils = require('../../utils.js')
+const { errorHandler } = require('../../utils')
 
 module.exports = {
 	name: 'profile',

@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const utils = require('../../utils.js');
 const mongoose = require('mongoose');
 const schemas = require('../../schemas.js');
 const message = mongoose.model('messages', schemas.message)
+const { errorHandler } = require('../../utils')
 
 module.exports = {
 	name: 'add-cw',
@@ -45,10 +45,10 @@ module.exports = {
 			anon:false,
 			type:mode
 		}).save((err, newDoc)=>{
-			if (err) return console.error(err)
+			if (err) return errorHandler(err,msg)
 			msg.user.messages.push(newDoc)
 			msg.user.save((err, newDoc)=>{
-				if (err) return console.error(err)
+				if (err) return errorHandler(err,msg)
 				return msg.channel.send(`Successfully added to <#${msg.guild.settings.channel}>`,new Discord.RichEmbed().setDescription(`[Jump to message](${cwmsg.url})`))
 			  })
 		  })

@@ -13,7 +13,7 @@ module.exports = {
                   _id: guild
                 })
           return await newSettings.save((err, newDoc)=>{
-              if (err) return console.error(err)
+              if (err) return errorHandler(err,msg)
               return resolve(newDoc);
             });
         })
@@ -36,7 +36,7 @@ module.exports = {
                   _id: id
                 })
           return await newChannel.save((err, newDoc)=>{
-              if (err) return console.error(err)
+              if (err) return errorHandler(err,msg)
               return resolve(newDoc);
             });
         })
@@ -59,7 +59,7 @@ module.exports = {
                   _id: id
                 })
           return await newUser.save((err, newDoc)=>{
-              if (err) return console.error(err)
+              if (err) return errorHandler(err,msg)
               return resolve(newDoc);
             });
         })

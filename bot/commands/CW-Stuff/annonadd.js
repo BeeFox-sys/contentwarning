@@ -1,8 +1,8 @@
 const Discord = require('discord.js');
-const utils = require('../../utils.js');
 const mongoose = require('mongoose');
 const schemas = require('../../schemas.js');
 const message = mongoose.model('messages', schemas.message)
+const { errorHandler } = require('../../utils')
 
 module.exports = {
 	name: 'anon-cw',
@@ -47,7 +47,7 @@ module.exports = {
 			anon:false,
 			type:mode
 		}).save(async (err, newDoc)=>{
-			if (err) return console.error(err)
+			if (err) return errorHandler(err,msg)
 			if(msg.guild.settings.alertChannel){
 				embed = new Discord.RichEmbed()
 					.setAuthor(msg.author.tag,msg.author.displayAvatarURL)

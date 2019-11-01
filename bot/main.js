@@ -2,6 +2,7 @@ const Discord = require('discord.js');
 const utils = require('./utils.js')
 const mongoose = require('mongoose');
 const fs = require('fs')
+const { errorHandler } = require('./utils')
 
 
 const client = new Discord.Client();
@@ -24,6 +25,7 @@ const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 const message = mongoose.model('messages', schemas.message)
 //load commands
 client.commands = new Discord.Collection();
+readFiles("./bot/commands")
 function readFiles(cdir){
     files = fs.readdirSync(cdir, {withFileTypes:true})
     for(const file of files){
@@ -64,7 +66,7 @@ client
     })
     .on("messageDelete",(msg)=>{
 		return message.deleteOne({_id:msg.id}, (err)=>{
-			if (err) return console.error(err)
+			if (err) return errorHandler(err,msg)
 		})
     })
     .on("message", async (msg)=>{
@@ -125,7 +127,7 @@ client
     client.on('raw', async event => {
         if(event.t !="MESSAGE_DELETE")return
         return message.deleteOne({_id:event.d.id}, (err)=>{
-			if (err) return console.error(err)
+			if (err) return errorHandler(err,msg)
 		})
 });
 

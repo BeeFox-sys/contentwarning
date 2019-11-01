@@ -1,16 +1,14 @@
 const Discord = require('discord.js');
-const utils = require('../../utils.js')
 const request = require('request');
-const config = require("../../config.json")
 
 const options = {
-    url: 'https://shibe.online/api/birds',
+    url: 'https://randomfox.ca/floof/',
   };
 
 module.exports = {
-	name: 'bird',
+	name: 'fox',
 	aliases: null,
-	description: 'Provides a random bird',
+	description: 'Provides a random fox',
     hidden: false,
 	perms: null,
 	guild: false,
@@ -18,7 +16,7 @@ module.exports = {
 	async execute(client, msg, args) {
         request(options, async (error, response, body) => {
             body = JSON.parse(body)
-            await msg.channel.send("",new Discord.Attachment(body[0]))
+            await msg.channel.send("",new Discord.Attachment(body.image))
         });
 	},
 };

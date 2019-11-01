@@ -1,4 +1,3 @@
-const Discord = require('discord.js');
 const utils = require('../../utils.js')
 
 module.exports = {
@@ -161,7 +160,7 @@ async function logChannel(client, msg, args){
 						msg.guild.settings.alertChannel = channel.id
 						await msg.guild.settings.save(async (err, newDoc)=>{
 							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`New log channel set to <#${newDoc.channel}>`)
+							return await msg.channel.send(`New log channel set to <#${newDoc.alertChannel}>`)
 						  });
 				}
 			})

@@ -1,7 +1,6 @@
-const Discord = require('discord.js');
-const utils = require('../../utils.js')
+const Discord = require('discord.js')
 const request = require('request');
-const config = require("../../config.json")
+const config = require("../../../config.json")
 
 const options = {
     url: 'https://api.thedogapi.com/v1/images/search',
