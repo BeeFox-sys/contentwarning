@@ -1,19 +1,19 @@
 const Discord = require('discord.js');
-const utils = require('../utils.js')
+const utils = require('../../utils.js')
 const request = require('request');
 const config = require("../../config.json")
 
 const options = {
-    url: 'https://api.thedogapi.com/v1/images/search',
+    url: 'https://api.thecatapi.com/v1/images/search',
     headers: {
-      'x-api-key': config.dogAPI
+      'x-api-key': config.catAPI
     }
   };
 
 module.exports = {
-	name: 'dog',
+	name: 'cat',
 	aliases: null,
-	description: 'Provides a random dog',
+	description: 'Provides a random cat',
     hidden: false,
 	perms: null,
 	guild: false,

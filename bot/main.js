@@ -24,12 +24,18 @@ const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 const message = mongoose.model('messages', schemas.message)
 //load commands
 client.commands = new Discord.Collection();
-const commandFiles = fs.readdirSync('./bot/commands').filter(file => file.endsWith('.js'));
-for (const file of commandFiles) {
-  const command = require(`./commands/${file}`);
-  client.commands.set(command.name, command);
+function readFiles(cdir){
+    files = fs.readdirSync(cdir, {withFileTypes:true})
+    for(const file of files){
+        if(file.isDirectory()){
+            readFiles(cdir+"/"+file.name)
+        } else {
+            let command = require(cdir.replace("bot/","")+"/"+file.name)
+            // if(!command.catagory) command.catagory = cdir.split("/").pop()
+            client.commands.set(command.name, command)
+        }
+    }
 }
-
 blacklist = require('./blacklist.js')
 levels = require('./levels.js')
 
