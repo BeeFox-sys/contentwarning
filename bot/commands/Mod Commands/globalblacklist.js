@@ -1,5 +1,4 @@
-const Discord = require('discord.js');
-const utils = require('../../utils.js')
+const { errorHandler } = require('../../utils')
 
 module.exports = {
 	name: 'blacklist',
@@ -21,7 +20,7 @@ module.exports = {
 				}
 				msg.guild.settings.globalBlacklist.push(object)
 				return await msg.guild.settings.save((err, newDoc)=>{
-					if (err) return console.error(err)
+					if (err) return errorHandler(err,msg)
 					return msg.channel.send(`||${object.peram}|| has been added to the global blacklist!`)
 				  });
 
@@ -33,7 +32,7 @@ module.exports = {
 				index = msg.guild.settings.globalBlacklist.map(e => e.peram).indexOf(object.peram)
 				msg.guild.settings.globalBlacklist.splice(index,1)
 				return await msg.guild.settings.save((err, newDoc)=>{
-					if (err) return console.error(err)
+					if (err) return errorHandler(err,msg)
 					return msg.channel.send(`${object.peram} has been removed from the global blacklist!`)
 					});			
 		

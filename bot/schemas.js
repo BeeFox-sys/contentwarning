@@ -12,6 +12,7 @@ module.exports = {
     allowAnon: { type: Boolean, default:true},
     enableFilter: Boolean,
     globalBlacklist: [{regex:Boolean,peram:String}],
+    antiCaps: {type: Number, default: 1},
     enableLevels: {type:Boolean,default:true}
   }),
   channel: new mongoose.Schema({
