@@ -3,6 +3,8 @@ const schemas = require('./schemas.js');
 const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 const channel = mongoose.model('channels', schemas.channel)
 const user = mongoose.model('users', schemas.user)
+const profile = mongoose.model('profiles', schemas.profile)
+
 
 module.exports = {
     async getGuild(guild) {
@@ -59,6 +61,21 @@ module.exports = {
                   _id: id
                 })
           return await newUser.save((err, newDoc)=>{
+              if (err) return errorHandler(err,msg)
+              return resolve(newDoc);
+            });
+        })
+    },
+    async getProfile(guild,user) {
+        return new Promise(async (resolve) => {
+          var doc = await profile.findById({guild:guild,user:user}).exec()
+          if(doc) return resolve(doc)
+          var newProfile = await new profile({
+                _id: {guild:guild,user:user},
+                experience: 0,
+                lastExp: new Date(0)
+            })
+          return await newProfile.save((err, newDoc)=>{
               if (err) return errorHandler(err,msg)
               return resolve(newDoc);
             });

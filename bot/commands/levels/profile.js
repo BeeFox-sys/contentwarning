@@ -1,5 +1,5 @@
 const Discord = require('discord.js');
-const { errorHandler } = require('../../utils')
+const { errorHandler, getProfile } = require('../../utils')
 
 module.exports = {
 	name: 'profile',
@@ -10,6 +10,7 @@ module.exports = {
 	guild: true,
 	catagory: "Levels",
 	async execute(client, msg, args) {
+		user = getProfile(msg.guild.id,msg.user.id)
 		embed = new Discord.RichEmbed()
 			.setAuthor(msg.member.displayName, msg.author.displayAvatarURL)
 			.addField("Experience", msg.user.guilds.get(msg.guild.id).experience, true)

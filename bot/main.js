@@ -19,6 +19,24 @@ const db = mongoose.connection
     .on('error', console.error.bind(console, 'connection error:'))
     .once('open', function () {
     console.warn("Connected to database")
+    
+    const schemas = require('./schemas.js');
+    const user = mongoose.model('users', schemas.user)
+    user.find({guilds: {$type: "object"}}, (err, result)=>{
+        console.log(result)
+        result.forEach((doc)=>{
+            cUser = doc._id
+            doc.guilds.forEach(async (guild,key)=>{
+                profile = await utils.getProfile(key,cUser)
+                if(profile.experience == 0){
+                    profile.experience = guild.experience
+                    profile.level = guild.level
+                    profile.lastExp = guild.lastExp
+                    profile.save()
+                }
+            })
+        })
+    })
     });
 const schemas = require('./schemas.js')
 const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)

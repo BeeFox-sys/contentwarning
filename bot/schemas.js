@@ -25,14 +25,17 @@ module.exports = {
   user: new mongoose.Schema({
     _id: String,
     messages: [String],
-    guilds: {
-      type: Map,
-      of: {
-        experience: Number,
-        level: Number,
-        lastExp: {type: Date, default: new Date(0)}
-      }
-    }
+
+    guilds: Map //Deprecated
+  }),
+  profile: new mongoose.Schema({
+    _id: {
+      guild: String,
+      user: String
+    },
+    experience: Number,
+    level: Number,
+    lastExp: {type: Date, default: new Date(0)}
   }),
   message: new mongoose.Schema({
     _id: String,
