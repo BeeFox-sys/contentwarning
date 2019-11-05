@@ -4,10 +4,10 @@ const utils = require('./utils.js')
 
 module.exports.execute = async (client, msg) => {
     if(!msg.guild.settings.enableLevels || !msg.channel.settings.enableLevels) return
-    data = await utils.getProfile(msg.guild.id,msg.author.id)
-    maxXP = 3
-    cooldown = 5
-    prevlvl = data.level
+    let data = await utils.getProfile(msg.guild.id,msg.author.id)
+    let maxXP = 3
+    let cooldown = 5
+    let prevlvl = data.level
     if(add_minutes(data.lastExp,cooldown) >= new Date()) return
     data.experience = data.experience+Math.floor(Math.random()*maxXP)+1
     data.level = Math.floor(0.48*Math.pow(data.experience, 10/23)),

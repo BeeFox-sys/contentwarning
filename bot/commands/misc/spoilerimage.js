@@ -12,9 +12,9 @@ module.exports = {
 		if(msg.attachments.size < 1){
 			return 
 		}
-		attachments = []
+		let attachments = []
 		msg.attachments.forEach(attachment => {
-			atc = new Discord.Attachment(attachment.url, "SPOILER_"+attachment.filename)
+			let atc = new Discord.Attachment(attachment.url, "SPOILER_"+attachment.filename)
 			attachments.push(atc)
 		});
 		await msg.channel.send(`<@!${msg.author.id}>: ${args.join(" ")}`,{files:attachments, disableEveryone:!(msg.member.hasPermission("MENTION_EVERYONE"))})

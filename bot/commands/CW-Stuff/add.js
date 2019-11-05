@@ -20,11 +20,11 @@ module.exports = {
 		if(args.length < 2){
 			return msg.reply("You need to supply both a trigger level (Light, Moderate, or Heavy) and a trigger!",{disableEveryone:true})
 		}
-		mode = args.shift().toLowerCase()
+		let mode = args.shift().toLowerCase()
 		if(mode != "light" && mode != "moderate" && mode != "heavy"){
 			return msg.reply(mode+" is not a valid option! Please use light/moderate/heavy",{disableEveryone:true})
 		}
-		trigger = args.join(' ')
+		let trigger = args.join(' ')
 		if(trigger.length > 2000){
 			return await msg.reply("Triggers may not execed 2000 chracters")
 		}
@@ -32,14 +32,14 @@ module.exports = {
 			trigger = "||"+trigger.replace(/\|\|/gi, "\u200B|\u200B|\u200B")+"||"
 		}
 		
-		modeName = mode.replace(/(?:^|\s)\S/g, function(a) {return a.toUpperCase();});
-		embed = new Discord.RichEmbed()
+		let modeName = mode.replace(/(?:^|\s)\S/g, function(a) {return a.toUpperCase();});
+		let embed = new Discord.RichEmbed()
 			.setAuthor(msg.member.displayName,msg.author.displayAvatarURL)
 			.setDescription(trigger)
 			.setColor(client.config.colours[mode])
 			.setFooter(`${modeName} trigger | ${msg.author.username}#${msg.author.discriminator}`)
-		cwmsg = await client.channels.get(msg.guild.settings.channel).send(embed)
-		newMessage = new message({
+		let cwmsg = await client.channels.get(msg.guild.settings.channel).send(embed)
+		let newMessage = new message({
 			_id:cwmsg.id,
 			channel:cwmsg.channel.id,
 			anon:false,

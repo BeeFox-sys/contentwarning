@@ -10,11 +10,11 @@ module.exports = {
 	guild: true,
 	catagory: "Levels",
 	async execute(client, msg, args) {
-		user = getProfile(msg.guild.id,msg.user.id)
-		embed = new Discord.RichEmbed()
+		let user = await getProfile(msg.guild.id,msg.user.id)
+		let embed = new Discord.RichEmbed()
 			.setAuthor(msg.member.displayName, msg.author.displayAvatarURL)
-			.addField("Experience", msg.user.guilds.get(msg.guild.id).experience, true)
-			.addField("Level", msg.user.guilds.get(msg.guild.id).level, true)
+			.addField("Experience", user.experience, true)
+			.addField("Level", user.level, true)
 			.setColor("RANDOM")
 		msg.channel.send(embed)
 	},

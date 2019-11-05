@@ -16,10 +16,10 @@ module.exports = {
 		if(args.length < 1){
 			return msg.reply("You need to supply a mesage id",{disableEveryone:true})
 		}
-		id = args[0]
+		let id = args[0]
 		if(!msg.user.messages.includes(id)) return await msg.reply("That message does not exist, or isn't a trigger message by you")
-		cwMessageData = await message.findById(id).exec()
-		cwMessage = await client.channels.get(cwMessageData.channel).fetchMessage(id)
+		let cwMessageData = await message.findById(id).exec()
+		let cwMessage = await client.channels.get(cwMessageData.channel).fetchMessage(id)
 		await cwMessage.delete()
 		return await message.deleteOne({_id:id}, (err)=>{
 			if (err) return errorHandler(err,msg)

@@ -84,7 +84,7 @@ module.exports = {
     },
     async errorHandeler(error,client,msg){
             try{
-                errorID = Number.parseInt(Discord.SnowflakeUtil.generate(new Date())).toString(36).match(/(.{6})/g).join("-").toUpperCase()
+                let errorID = Number.parseInt(Discord.SnowflakeUtil.generate(new Date())).toString(36).match(/(.{6})/g).join("-").toUpperCase()
                 console.error(errorID, error.stack)
                 if(msg == null) msg = ""
                 if(client.config.logChannel) client.channels.get(client.config.logChannel).send(`\`${errorID}\` ${msg.content || msg}\n\`\`\`javascript\n${error.stack}\`\`\``)
@@ -108,7 +108,7 @@ module.exports = {
             }
         },
     permsToText(perms){
-        hrPerms = []
+        let hrPerms = []
         perms.forEach(perm => {
             perm = perm.toLowerCase()
             perm = perm.replace("_"," ")

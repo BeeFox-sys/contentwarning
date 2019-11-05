@@ -11,9 +11,10 @@ module.exports = {
 	catagory: "Mod Commands",
 	async execute(client, msg, args) {
 		try{
-			let cwc = await client.channels.get(msg.guild.settings.channel)
-			let log = await client.channels.get(msg.guild.settings.alertChannel)
-			menu = new Menu("Settings","Type your response number or name", [
+			let [cwc,log] = await Promise.all([
+				client.channels.get(msg.guild.settings.channel),client.channels.get(msg.guild.settings.alertChannel)
+			]) 
+			let menu = new Menu("Settings","Type your response number or name", [
 				new Page("Prefix",
 						`Changes Prefix, currently \`${msg.guild.settings.prefix}\`\nType a new prefix`,
 						"STRING",
@@ -32,8 +33,6 @@ module.exports = {
 						`Enable the Comfort Cloud levling system. Currently ${msg.guild.settings.allowAnon ? "enabled" : "disabled"}.\nEnable anonymous triggers?`, "BOOLEAN", levels)
 				
 				])
-			// mainMenu(client, msg, args)
-
 			return await menu.run(msg,client)
 				.catch(async error=>{
 					switch(error){

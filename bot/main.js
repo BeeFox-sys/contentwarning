@@ -27,7 +27,7 @@ const message = mongoose.model('messages', schemas.message)
 client.commands = new Discord.Collection();
 readFiles("./bot/commands")
 function readFiles(cdir){
-    files = fs.readdirSync(cdir, {withFileTypes:true})
+    let files = fs.readdirSync(cdir, {withFileTypes:true})
     for(const file of files){
         if(file.isDirectory()){
             readFiles(cdir+"/"+file.name)
@@ -38,8 +38,8 @@ function readFiles(cdir){
         }
     }
 }
-blacklist = require('./blacklist.js')
-levels = require('./levels.js')
+const blacklist = require('./blacklist.js')
+const levels = require('./levels.js')
 
 client
     .on('ready', async () => {
@@ -89,9 +89,9 @@ client
                 blacklist.execute(client, msg)
                 return;
             }
-            args = msg.content.split(" ")
+            let args = msg.content.split(" ")
             if(args[0] == "") return client.commands.get("help").execute(client,msg,args)
-            commandName = args.shift().toLowerCase()
+            let commandName = args.shift().toLowerCase()
 
             msg.user = await utils.getUser(msg.author.id)
 
@@ -100,7 +100,7 @@ client
 
             if(!command){
                 if(msg.channel.type != 'text') return await msg.channel.send("I didn't recognise that command. You don't need to use a prefix here! Just type help for a list of commands")
-                react = await msg.react('⚠').catch((err)=>utils.errorHandeler(error,client,msg))
+                let react = await msg.react('⚠').catch((err)=>utils.errorHandeler(error,client,msg))
                 return await msg.awaitReactions((reaction, user) => reaction.emoji.name === '⚠' &user.id === msg.author.id,{ time: 15000, max: 1, errors: ['time'] })
                 .then(async ()=>{
                     await react.remove()

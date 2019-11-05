@@ -16,7 +16,7 @@ module.exports = {
 			}
 		}
 		//Change command order by editing here
-		commands = {
+		let commands = {
 			"Trigger List":null,
 			"Levels":null,
 			"Calming":null,
@@ -40,7 +40,7 @@ module.exports = {
 			if(!commands[command.catagory])commands[command.catagory]=""
 			commands[command.catagory] += `\n${(msg.guild) ? msg.guild.settings.prefix : ""}**${command.name}**`
 		});
-		helpMessage = ""
+		let helpMessage = ""
 		for (const catagory in commands) {
 			if (commands.hasOwnProperty(catagory)) {
 				const element = commands[catagory];
