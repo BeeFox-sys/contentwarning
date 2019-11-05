@@ -3,7 +3,7 @@ module.exports = {
 	aliases: undefined,
 	description: 'Lists all commands, if given a command name, will give the description of the command and any aliases',
 	hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: false,
 	catagory: "Misc",
 	async execute(client, msg, args) {

@@ -6,7 +6,7 @@ module.exports = {
 	aliases: null,
 	description: 'Responds to the user',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: true,
 	catagory: "Levels",
 	async execute(client, msg, args) {

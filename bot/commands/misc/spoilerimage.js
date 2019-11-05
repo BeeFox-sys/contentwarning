@@ -5,7 +5,7 @@ module.exports = {
 	aliases: ["img","spoiler"],
 	description: 'Reposts an image form the user in a spoiler',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: false,
 	catagory: "Misc",
 	async execute(client, msg, args) {

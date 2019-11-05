@@ -14,7 +14,7 @@ module.exports = {
 	aliases: null,
 	description: 'Provides a random dog',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: false,
 	catagory: "Calming",
 	async execute(client, msg, args) {

@@ -5,7 +5,7 @@ module.exports = {
 	aliases: ["cp"],
 	description: 'Changes the maximum % of caps allowed in the message. 100% disables caps protection\nUsage: caps-protection [100%-0%]\nUsage: global-blacklist\nExample: caps-protection 70%',
     hidden: false,
-	perms: ["MANAGE_GUILD"],
+	userPerms: ["MANAGE_GUILD"],
 	guild: true,
 	catagory: "Automod",
 	async execute(client, msg, args) {

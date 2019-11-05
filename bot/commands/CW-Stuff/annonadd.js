@@ -9,7 +9,7 @@ module.exports = {
 	aliases: ["anon","aadd"],
 	description: 'Adds a cw anonymously. Reqires a light, moderate, or heavy option.\nUsage: add <light/moderate/heavy> <Trigger>\nExample: add mild Creepy crawlies',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: true,
 	catagory: "Trigger List",
 	async execute(client, msg, args) {

@@ -5,7 +5,7 @@ module.exports = {
 	aliases: ["bl"],
 	description: 'Adds/removes a blacklist to the guild blacklist, or shows a list of current blacklisted words\nUsage: global-blacklist add/remove [string]\nUsage: global-blacklist\nExample: global-blacklist add butt',
     hidden: false,
-	perms: ["MANAGE_GUILD"],
+	userPerms: ["MANAGE_GUILD"],
 	guild: true,
 	catagory: "Automod",
 	async execute(client, msg, args) {

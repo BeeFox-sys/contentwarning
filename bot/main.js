@@ -115,7 +115,28 @@ client
             if(command.guild && msg.channel.type !== 'text'){
                 return msg.channel.send("That command is only avalible in guilds")
             }
-            if(msg.channel.type == 'text' && command.perms && !msg.member.hasPermission(command.perms)) return await msg.channel.send(`You do not have permission! Only users with the ${utils.permsToText(command.perms).join(", ")} permission${(command.perms.length > 1) ? "s" : ""} can change the bot's settings!`)
+            if(msg.guild && command.userPerms){
+                let missingPerms = await msg.member.permissions.missing(command.userPerms)
+                if(missingPerms.length > 0){
+                    let missingReadable = ""
+                    missingPerms.forEach(perm => {
+                        missingReadable += "\n"+utils.humanReadablePermissions[perm]
+                    })
+                    return await msg.channel.send(`Missing Permissions!\nYou must have the following permissions to run this command:**${missingReadable}**`)
+                }
+            }
+ 
+            if(msg.guild && command.runPerms){
+                let missingPerms = await msg.guild.me.permissions.missing(command.runPerms)
+                if(missingPerms.length > 0){
+                    let missingReadable = ""
+                    missingPerms.forEach(perm => {
+                        missingReadable += "\n"+utils.humanReadablePermissions[perm]
+                    })
+                    return await msg.channel.send(`Missing Permissions!**${missingReadable}**\nPlease make sure that ${client.user} has these permissions, and then try the command again. You may need to ask a server administor to check these.`)
+                }
+            }
+
             command.execute(client,msg,args)
         } catch (error) {
             utils.errorHandeler(error,client,msg)

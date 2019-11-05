@@ -9,7 +9,7 @@ module.exports = {
 	aliases: ["add"],
 	description: 'Adds a cw for the user. Reqires a light, moderate, or heavy option, and a message describing the trigger.\nUsage: add <light/moderate/heavy> <Trigger>\nExample: add mild Creepy crawlies',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: true,
 	catagory: "Trigger List",
 	async execute(client, msg, args) {

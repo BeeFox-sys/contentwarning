@@ -6,7 +6,7 @@ module.exports = {
 	aliases: undefined,
 	description: 'Opens the settings menu. Only users with the `Mangage Server` permission can use this command.',
 	hidden: false,
-	perms: ["MANAGE_GUILD"],
+	userPerms: ["MANAGE_GUILD"],
 	guild: true,
 	catagory: "Mod Commands",
 	async execute(client, msg, args) {

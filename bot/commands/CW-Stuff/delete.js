@@ -9,7 +9,7 @@ module.exports = {
 	aliases: ["delete"],
 	description: 'Deletes a users trigger message. Reqires the message ID to delete.\nUsage: delete <message id> \nExample: delete 2973362791',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: false,
 	catagory: "Trigger List",
 	async execute(client, msg, args) {

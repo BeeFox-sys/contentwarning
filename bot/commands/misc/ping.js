@@ -3,7 +3,7 @@ module.exports = {
 	aliases: ["pong"],
 	description: 'Responds to the user',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: false,
 	catagory: "Misc",
 	async execute(client, msg, args) {

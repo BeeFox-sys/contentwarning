@@ -10,7 +10,7 @@ module.exports = {
 	aliases: null,
 	description: 'Provides a random fox',
     hidden: false,
-	perms: null,
+	userPerms: null,
 	guild: false,
 	catagory: "Calming",
 	async execute(client, msg, args) {
