@@ -77,6 +77,7 @@ client
             if(msg.channel.type == 'text'){
                 msg.guild.settings = await utils.getGuild(msg.guild.id)
                 msg.channel.settings = await utils.getChannel(msg.channel.id)
+                blacklist.execute(client,msg)
                 levels.execute(client,msg)
             }
             if (msg.channel.type == 'text' && msg.content.startsWith(msg.guild.settings.prefix)){

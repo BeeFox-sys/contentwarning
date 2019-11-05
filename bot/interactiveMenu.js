@@ -82,7 +82,7 @@ module.exports.Page = class Page{
         this._callback = callback
     }
 
-    typeFLAGS = ["BOOLEAN", "STRING", "CHANNEL", "ROLE", "NONE"]
+    typeFLAGS = ["BOOLEAN", "STRING", "CHANNEL", "ROLE"]
 
     set name(name){
         if(!name) throw Error("Page must have name!")
@@ -95,8 +95,7 @@ module.exports.Page = class Page{
     }
 
     set type(type){
-        if(!type) throw TypeError("Type must be valid typeFLAG")
-        if(!this.typeFLAGS.includes(type)) throw new TypeError("Invalid type flag: "+type)
+        if(!this.typeFLAGS.includes(type) && type) throw new TypeError("Invalid type flag: "+type)
         this._type = type
     }
 
@@ -112,6 +111,7 @@ module.exports.Page = class Page{
     get timeout(){return this._timeout}
 
     async run(message, client){
+        if(!this.callback) throw new Error("Page must have callback!")
         switch(this.type){
                 case "BOOLEAN":
                     return await this.callback(client, message, await this.boolean(message.channel, message.author))

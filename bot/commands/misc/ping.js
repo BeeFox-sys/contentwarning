@@ -1,3 +1,5 @@
+const {errorHandeler} = require("../../utils")
+
 module.exports = {
 	name: 'ping',
 	aliases: ["pong"],
