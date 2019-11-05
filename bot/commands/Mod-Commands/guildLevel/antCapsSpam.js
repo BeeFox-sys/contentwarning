@@ -1,13 +1,13 @@
-const { errorHandler } = require('../../utils')
+const { errorHandler } = require('../../../utils')
 
 module.exports = {
-	name: 'caps-protection',
-	aliases: ["cp"],
-	description: 'Changes the maximum % of caps allowed in the message. 100% disables caps protection\nUsage: caps-protection [100%-0%]\nUsage: global-blacklist\nExample: caps-protection 70%',
-    hidden: false,
-	perms: ["MANAGE_GUILD"],
-	guild: true,
-	catagory: "Automod",
+	// name: 'caps-protection',
+	// aliases: ["cp"],
+	// description: 'Changes the maximum % of caps allowed in the message. 100% disables caps protection\nUsage: caps-protection [100%-0%]\nUsage: global-blacklist\nExample: caps-protection 70%',
+    // hidden: false,
+	// perms: ["MANAGE_GUILD"],
+	// guild: true,
+	// catagory: "Automod",
 	async execute(client, msg, args) {
 		if(args.length < 1){
 			return await msg.channel.send("Current max caps in a mesage: "+Math.floor(msg.guild.settings.antiCaps*100)+"%")

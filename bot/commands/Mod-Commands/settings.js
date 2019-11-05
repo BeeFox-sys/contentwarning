@@ -1,4 +1,5 @@
-const utils = require('../../utils.js')
+const {errorHandeler} = require('../../utils.js')
+const {Menu, Page} = require("../../interactiveMenu")
 
 module.exports = {
 	name: 'settings',
@@ -10,256 +11,122 @@ module.exports = {
 	catagory: "Mod Commands",
 	async execute(client, msg, args) {
 		try{
-			mainMenu(client, msg, args)
+			let cwc = await client.channels.get(msg.guild.settings.channel)
+			let log = await client.channels.get(msg.guild.settings.alertChannel)
+			menu = new Menu("Settings","Type your response number or name", [
+				new Page("Prefix",
+						`Changes Prefix, currently \`${msg.guild.settings.prefix}\`\nType a new prefix`,
+						"STRING",
+						prefixMenu),
+				new Menu("CW Settings","Settings for the cw and trigger capabilities of the bot",[
+					new Page("CW Channel",
+						`The channel where triggers can be cataloged. Currently: ${cwc ? "#"+cwc.name : "None"}\nTag a channel to set it as the new channel.\nType cancel to cancel and clear to clear the channel.`,"CHANNEL", cwChannel),
+					new Page("Force Spoiler Triggers",
+							`When submitting a trigger with this enabled, the trigger will be hidden in ||Spoiler tags||. Currently ${msg.guild.settings.hideCW ? "enabled" : "disabled"}.\nEnable forced spoilers?`, "BOOLEAN", hideCw),
+					new Page("Anonymous Triggers",
+							`Allows the ${msg.guild.settings.prefix}annon-cw to be used to sumbit anonymous triggers. Currently ${msg.guild.settings.allowAnon ? "enabled" : "disabled"}.\nEnable anonymous triggers?`, "BOOLEAN", annonCW)
+				]),
+				new Page("Log Channel",
+						`The channel where automod stuff is put. Currently: ${log ? "#"+log.name : "None"}\nTag a channel to set it as the new channel.\nType cancel to cancel and clear to clear the channel.`,"CHANNEL", logChannel),
+				new Page("Leveling System",
+						`Enable the Comfort Cloud levling system. Currently ${msg.guild.settings.allowAnon ? "enabled" : "disabled"}.\nEnable anonymous triggers?`, "BOOLEAN", levels)
+				
+				])
+			// mainMenu(client, msg, args)
+
+			return await menu.run(msg,client)
+				.catch(async error=>{
+					switch(error){
+						case "Canceled":
+							return await msg.channel.send("Canceled")
+						case "Timed Out":
+								return await msg.channel.send("Timed Out")
+						case "Invalid Option":
+								return await msg.channel.send("Invalid Option")
+						default:
+							return await errorHandeler(error,client,msg)
+					}
+				})
 		} catch (error) {
 			throw error
 		}
 	},
 };
 
-async function mainMenu(client, msg, args){
-	msg.channel.send(
-`**Settings Menu**
-Please select an option below by sending a message with the number or name
-\`\`\`md
-[1]: Prefix
-# Allows you to change the bot prefix
-[2]: CW Channel
-# Sets the channel where content warnings go, or disables them
-[3]: Log Channel
-# Sets the log channel where any information that moderators need to see goes
-[4]: Force Spoiler CW
-# Enable/Disable Forcing all CWs to be in spoiler tags
-[5]: Allow Anonymous CW
-# Enable/Disable members ability to anonymously submit CWs to the CW channel
-[6]: Enable/Disable leveling
-# Enables/Disables the leveling system, when disabled all xp collection is paused
-
-[0]: Cancel
-\`\`\``	
-	)
-	await msg.channel.awaitMessages(message=>message.member.id===msg.member.id, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().content.toLowerCase()) {
-					case "0":
-					case "cancel":
-						return await msg.channel.send("Canceled Operation");
-
-					case "1":
-					case "prefix":
-						return prefixMenu(client, msg, args)
-
-					case "2":
-					case "cw channel":
-						return cwChannel(client, msg, args)
-
-					case "3":
-					case "log channel":
-						return logChannel(client,msg,args)
-
-					case "4":
-					case "force spoiler cw":
-						return hideCw(client, msg, args)
-
-					case "5":
-					case "allow anonymous cw":
-						return anonCw(client, msg, args)
-
-					case "6":
-					case "enable/disable leveling":
-						return levels(client, msg, args)
-					
-					default:
-						await msg.channel.send("That's not an option");
-						return mainMenu(client, msg, args);
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
+async function prefixMenu(client, msg, response){
+	switch (response.toLowerCase()) {
+		case "cancel":
+			return await msg.channel.send("Canceled Operation");
+		
+		default:
+			msg.guild.settings.prefix = response
+			await msg.guild.settings.save(async (err, newDoc)=>{
+				if (err) return errorHandeler(error)
+				return await msg.channel.send(`New prefix set to \`${newDoc.prefix}\``)
+				});
+	}
 }
 
-async function prefixMenu(client, msg, args){
-	msg.channel.send("Please input a new prefix, or `cancel` to leave it as is")
-	await msg.channel.awaitMessages(message=>message.member.id===msg.member.id, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().content.toLowerCase()) {
-					case "cancel":
-						return await msg.channel.send("Canceled Operation");
-					
-					default:
-						msg.guild.settings.prefix = response.first().content
-						await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`New prefix set to \`${newDoc.prefix}\`\nUse ${newDoc.prefix}help for a list of commands`)
-						  });
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
+async function cwChannel(client, msg, response){
+	if(typeof response == "string"){
+		if(response.toLowerCase()=="cancel") return await msg.channel.send("Canceled Operation");
+		if(response.toLowerCase()=="clear"){
+			msg.guild.settings.channel = null
+			return await msg.guild.settings.save(async (err, newDoc)=>{
+				if (err) return errorHandeler(error)
+				return await msg.channel.send(`CW Channel Cleared`)
+				});
+		}
+	} else {
+		msg.guild.settings.channel = response.id
+		await msg.guild.settings.save(async (err, newDoc)=>{
+			if (err) return errorHandeler(error)
+			return await msg.channel.send(`New cw channel set to <#${newDoc.channel}>`)
+			});
+	}
 }
 
-async function cwChannel(client, msg, args){
-	msg.channel.send("Please input a new channel for cw's, `clear` to remove it, or `cancel` to leave it as is")
-	await msg.channel.awaitMessages(message=>message.member.id===msg.member.id, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().content.toLowerCase()) {
-					case "cancel":
-						return await msg.channel.send("Canceled Operation");
-
-					case "clear":
-						msg.guild.settings.channel = null
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Channel Cleared. **WARNING** most of the bots fetures will not be accessable. Users will still be able to edit their CWs however`)
-							});
-				
-					default:
-						channel = await response.first().mentions.channels.first()
-						
-						if(channel == undefined){
-							return await msg.channel.send("Sorry! That isn't a valid channel. Please mention a channel!")
-						}
-						msg.guild.settings.channel = channel.id
-						await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`New cw channel set to <#${newDoc.channel}>`)
-						  });
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
+async function logChannel(client, msg, response){
+	if(typeof response == "string"){
+		if(response.toLowerCase()=="cancel") return await msg.channel.send("Canceled Operation");
+		if(response.toLowerCase()=="clear"){
+			msg.guild.settings.alertChannel = null
+			return await msg.guild.settings.save(async (err, newDoc)=>{
+				if (err) return errorHandeler(error)
+				return await msg.channel.send(`Log Channel Cleared`)
+				});
+		}
+	} else {
+		msg.guild.settings.alertChannel = response.id
+		await msg.guild.settings.save(async (err, newDoc)=>{
+			if (err) return errorHandeler(error)
+			return await msg.channel.send(`New Log channel set to <#${newDoc.channel}>`)
+		});
+	}
 }
 
-async function logChannel(client, msg, args){
-	msg.channel.send("Please input a new channel for logs, `clear` to remove it, or `cancel` to leave it as is")
-	await msg.channel.awaitMessages(message=>message.member.id===msg.member.id, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().content.toLowerCase()) {
-					case "cancel":
-						return await msg.channel.send("Canceled Operation");
 
-					case "clear":
-						msg.guild.settings.alertChannel = null
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Channel Cleared`)
-							});
-				
-					default:
-						channel = await response.first().mentions.channels.first()
-						
-						if(channel == undefined){
-							return await msg.channel.send("Sorry! That isn't a valid channel. Please mention a channel!")
-						}
-						msg.guild.settings.alertChannel = channel.id
-						await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`New log channel set to <#${newDoc.alertChannel}>`)
-						  });
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
+async function hideCw(client, msg, response){
+	msg.guild.settings.hideCW = response
+	return await msg.guild.settings.save(async (err, newDoc)=>{
+		if (err) return errorHandeler(error)
+		return await msg.channel.send(`${newDoc.hideCW ? "Enabled" : "Disabled"} force hiding of CWs`)
+		});
 }
 
-async function hideCw(client, msg, args){
-	message = await msg.channel.send("Please select an option. ✅ will hide all added cw's in a ||spoiler|| tag. ❌ will allow the user to use ||spoiler|| tags to hide it if they want to. Default is ✅")
-	await message.react("✅")
-	await message.react("❌")
-	await message.awaitReactions((reaction, user)=>{return (user.id==msg.author.id&&(reaction.emoji.name == "✅"||reaction.emoji.name == "❌"))}, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().emoji.name) {
-					case "✅":
-						msg.guild.settings.hideCW = true
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Enabled force hiding of CWs`)
-							});
-
-					case "❌":
-						msg.guild.settings.hideCW = false
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Disabled force hiding of CWs`)
-							});
-				
-					default:
-						break;
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
+async function annonCW(client, msg, response){
+	msg.guild.settings.allowAnon = response
+	return await msg.guild.settings.save(async (err, newDoc)=>{
+		if (err) return errorHandeler(error)
+		return await msg.channel.send(`${newDoc.allowAnon ? "Enabled" : "Disabled"} anonymous triggers`)
+		});
 }
 
-async function anonCw(client, msg, args){
-	message = await msg.channel.send("Please select an option. ✅ will allow anonymous CWs to be submitted. ❌ will disallow them. Default is ✅")
-	await message.react("✅")
-	await message.react("❌")
-	await message.awaitReactions((reaction, user)=>{return(user.id===msg.author.id&&(reaction.emoji.name == "✅"||reaction.emoji.name == "❌"))}, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().emoji.name) {
-					case "✅":
-						msg.guild.settings.allowAnon = true
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Enabled anonymous CWs`)
-							});
-
-					case "❌":
-						msg.guild.settings.allowAnon = false
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Disabled anonymous CWs`)
-							});
-				
-					default:
-						break;
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
-}
-
-async function levels(client, msg, args){
-	message = await msg.channel.send("Please select an option. ✅ will enable the levels system. ❌ will disable it. Default is ✅")
-	await message.react("✅")
-	await message.react("❌")
-	await message.awaitReactions((reaction, user)=>{return (user.id==msg.author.id&&(reaction.emoji.name == "✅"||reaction.emoji.name == "❌"))}, { time: 60000, max: 1, errors: ['time'] })
-			.then(async response => {
-				switch (response.first().emoji.name) {
-					case "✅":
-						msg.guild.settings.enableLevels = true
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Level system enabled`)
-							});
-
-					case "❌":
-						msg.guild.settings.enableLevels = false
-						return await msg.guild.settings.save(async (err, newDoc)=>{
-							if (err) return utils.errorHandeler(error)
-							return await msg.channel.send(`Level system disabled`)
-							});
-				
-					default:
-						break;
-				}
-			})
-			.catch(error=>{
-				if(error.size == 0) return msg.channel.send("Operation Timed Out") 
-				utils.errorHandeler(error,msg)
-			})
+async function levels(client, msg, response){
+	msg.guild.settings.enableLevels = response
+	return await msg.guild.settings.save(async (err, newDoc)=>{
+		if (err) return errorHandeler(error)
+		return await msg.channel.send(`${newDoc.enableLevels ? "Enabled" : "Disabled"} leveling system`)
+		});
 }
 

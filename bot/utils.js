@@ -4,6 +4,7 @@ const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 const channel = mongoose.model('channels', schemas.channel)
 const user = mongoose.model('users', schemas.user)
 const profile = mongoose.model('profiles', schemas.profile)
+const Discord = require("discord.js")
 
 
 module.exports = {
@@ -81,18 +82,31 @@ module.exports = {
             });
         })
     },
-    async errorHandeler(error,msg){
-        errorID = Number.parseInt(msg.id).toString(36).match(/(.{6})/g).join("-").toUpperCase()
-        console.error(errorID, error.stack)
-        msg.client.channels.get(msg.client.config.logChannel).send(`\`${errorID}\` ${msg.content}\n\`\`\`javascript\n${error.stack}\`\`\``)
-            switch (error.code) {
-                case 50013:
-                    return await msg.channel.send(`Something went wrong! I'm missing some permissions!\nError ID: \`${errorID}\``)
-            
-                default:
-                    return await msg.channel.send(`Something went wrong!\nError ID: \`${errorID}\``)
+    async errorHandeler(error,client,msg){
+            try{
+                errorID = Number.parseInt(Discord.SnowflakeUtil.generate(new Date())).toString(36).match(/(.{6})/g).join("-").toUpperCase()
+                console.error(errorID, error.stack)
+                if(msg == null) msg = ""
+                if(client.config.logChannel) client.channels.get(client.config.logChannel).send(`\`${errorID}\` ${msg.content || msg}\n\`\`\`javascript\n${error.stack}\`\`\``)
+                await new errors({
+                    _id: errorID,
+                    stack: error.stack,
+                    message: msg.content || msg || null
+                }).save()
+                if(typeof msg != "object") return
+                //   console.log(error.message)
+                switch (error.message) {
+                    case "DiscordAPIError: Missing Permissions":
+                        return await msg.channel.send(`Something went wrong! I'm missing some permissions!\nError ID: \`${errorID}\``)
+                
+                    default:
+                        return await msg.channel.send(`Something went wrong!\nError ID: \`${errorID}\``)
+                }
+            } catch (error){
+                // module.exports.errorHandeler(error,client,msg)
+                console.error(error)
             }
-    },
+        },
     permsToText(perms){
         hrPerms = []
         perms.forEach(perm => {

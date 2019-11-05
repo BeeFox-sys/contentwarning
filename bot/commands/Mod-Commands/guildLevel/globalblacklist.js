@@ -1,13 +1,13 @@
-const { errorHandler } = require('../../utils')
+const { errorHandler } = require('../../../utils')
 
 module.exports = {
-	name: 'blacklist',
-	aliases: ["bl"],
-	description: 'Adds/removes a blacklist to the guild blacklist, or shows a list of current blacklisted words\nUsage: global-blacklist add/remove [string]\nUsage: global-blacklist\nExample: global-blacklist add butt',
-    hidden: false,
-	perms: ["MANAGE_GUILD"],
-	guild: true,
-	catagory: "Automod",
+	// name: 'blacklist',
+	// aliases: ["bl"],
+	// description: 'Adds/removes a blacklist to the guild blacklist, or shows a list of current blacklisted words\nUsage: global-blacklist add/remove [string]\nUsage: global-blacklist\nExample: global-blacklist add butt',
+    // hidden: false,
+	// perms: ["MANAGE_GUILD"],
+	// guild: true,
+	// catagory: "Automod",
 	async execute(client, msg, args) {
 		if(args.length < 2){
 			return await msg.channel.send("Current Global Blacklist:\n"+msg.guild.settings.globalBlacklist.map(e => e.peram).join("\n"))
