@@ -30,7 +30,7 @@ module.exports = {
 				new Page("Log Channel",
 						`The channel where automod stuff is put. Currently: ${log ? "#"+log.name : "None"}\nTag a channel to set it as the new channel.\nType cancel to cancel and clear to clear the channel.`,"CHANNEL", logChannel),
 				new Page("Leveling System",
-						`Enable the Comfort Cloud levling system. Currently ${msg.guild.settings.allowAnon ? "enabled" : "disabled"}.\nEnable anonymous triggers?`, "BOOLEAN", levels)
+						`Enable the Comfort Cloud levling system. Currently ${msg.guild.settings.enableLevels ? "enabled" : "disabled"}.\nEnable anonymous triggers?`, "BOOLEAN", levels)
 				
 				])
 			return await menu.run(msg,client)
