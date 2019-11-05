@@ -99,7 +99,7 @@ async function logChannel(client, msg, response){
 		msg.guild.settings.alertChannel = response.id
 		await msg.guild.settings.save(async (err, newDoc)=>{
 			if (err) return errorHandeler(error,client,msg)
-			return await msg.channel.send(`New Log channel set to <#${newDoc.channel}>`)
+			return await msg.channel.send(`New Log channel set to <#${newDoc.alertChannel}>`)
 		});
 	}
 }
