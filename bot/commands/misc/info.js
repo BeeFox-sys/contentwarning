@@ -6,8 +6,7 @@ module.exports = {
   description: 'Shows information about the bot',
   hidden: false,
   args: false,
-  usage: undefined,
-  example: undefined,
+  catagory:"Misc",
   async execute(client, msg, args) {
     const oauthApp = await client.fetchApplication();
     const clientID = oauthApp.id;
