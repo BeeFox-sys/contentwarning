@@ -4,6 +4,7 @@ const guildSettings = mongoose.model('guildSettings', schemas.guildSettings)
 const channel = mongoose.model('channels', schemas.channel)
 const user = mongoose.model('users', schemas.user)
 const profile = mongoose.model('profiles', schemas.profile)
+const errors = mongoose.model('errors', schemas.error)
 const Discord = require("discord.js")
 
 

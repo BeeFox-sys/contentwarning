@@ -77,17 +77,16 @@ client
             if(msg.channel.type == 'text'){
                 msg.guild.settings = await utils.getGuild(msg.guild.id)
                 msg.channel.settings = await utils.getChannel(msg.channel.id)
-                blacklist.execute(client,msg)
+                blacklist.execute(client, msg)
                 levels.execute(client,msg)
             }
-            if (msg.channel.type == 'text' && msg.content.startsWith(msg.guild.settings.prefix)){
+            if (msg.guild && msg.content.startsWith(msg.guild.settings.prefix)){
                 msg.content = msg.content.substr(msg.guild.settings.prefix.length).trim()
             } else if(client.mentionPrefix.test(msg.content)){
                 msg.content = msg.content.replace(client.mentionPrefix, "").trim()
-            } else if(msg.channel.type !== 'text'){
+            } else if(!msg.guild){
 
             } else {
-                blacklist.execute(client, msg)
                 return;
             }
             let args = msg.content.split(" ")

@@ -60,7 +60,7 @@ async function prefixMenu(client, msg, response){
 		default:
 			msg.guild.settings.prefix = response
 			await msg.guild.settings.save(async (err, newDoc)=>{
-				if (err) return errorHandeler(error)
+				if (err) return errorHandeler(error,client,msg)
 				return await msg.channel.send(`New prefix set to \`${newDoc.prefix}\``)
 				});
 	}
@@ -72,14 +72,14 @@ async function cwChannel(client, msg, response){
 		if(response.toLowerCase()=="clear"){
 			msg.guild.settings.channel = null
 			return await msg.guild.settings.save(async (err, newDoc)=>{
-				if (err) return errorHandeler(error)
+				if (err) return errorHandeler(error,client,msg)
 				return await msg.channel.send(`CW Channel Cleared`)
 				});
 		}
 	} else {
 		msg.guild.settings.channel = response.id
 		await msg.guild.settings.save(async (err, newDoc)=>{
-			if (err) return errorHandeler(error)
+			if (err) return errorHandeler(error,client,msg)
 			return await msg.channel.send(`New cw channel set to <#${newDoc.channel}>`)
 			});
 	}
@@ -91,14 +91,14 @@ async function logChannel(client, msg, response){
 		if(response.toLowerCase()=="clear"){
 			msg.guild.settings.alertChannel = null
 			return await msg.guild.settings.save(async (err, newDoc)=>{
-				if (err) return errorHandeler(error)
+				if (err) return errorHandeler(error,client,msg)
 				return await msg.channel.send(`Log Channel Cleared`)
 				});
 		}
 	} else {
 		msg.guild.settings.alertChannel = response.id
 		await msg.guild.settings.save(async (err, newDoc)=>{
-			if (err) return errorHandeler(error)
+			if (err) return errorHandeler(error,client,msg)
 			return await msg.channel.send(`New Log channel set to <#${newDoc.channel}>`)
 		});
 	}
@@ -108,7 +108,7 @@ async function logChannel(client, msg, response){
 async function hideCw(client, msg, response){
 	msg.guild.settings.hideCW = response
 	return await msg.guild.settings.save(async (err, newDoc)=>{
-		if (err) return errorHandeler(error)
+		if (err) return errorHandeler(error,client,msg)
 		return await msg.channel.send(`${newDoc.hideCW ? "Enabled" : "Disabled"} force hiding of CWs`)
 		});
 }
@@ -116,7 +116,7 @@ async function hideCw(client, msg, response){
 async function annonCW(client, msg, response){
 	msg.guild.settings.allowAnon = response
 	return await msg.guild.settings.save(async (err, newDoc)=>{
-		if (err) return errorHandeler(error)
+		if (err) return errorHandeler(error,client,msg)
 		return await msg.channel.send(`${newDoc.allowAnon ? "Enabled" : "Disabled"} anonymous triggers`)
 		});
 }
@@ -124,7 +124,7 @@ async function annonCW(client, msg, response){
 async function levels(client, msg, response){
 	msg.guild.settings.enableLevels = response
 	return await msg.guild.settings.save(async (err, newDoc)=>{
-		if (err) return errorHandeler(error)
+		if (err) return errorHandeler(error,client,msg)
 		return await msg.channel.send(`${newDoc.enableLevels ? "Enabled" : "Disabled"} leveling system`)
 		});
 }

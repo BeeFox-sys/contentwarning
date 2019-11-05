@@ -16,7 +16,8 @@ module.exports = {
 			new Menu("Blacklist Settings","Controls the blacklist settings",[
 				new Page("Current Blacklist","Returns the current blacklist",null, showBlacklist),
 				new Page("Add to Blacklist","Allows the user to add to the Blacklist\nPlease place each addition to the blacklist on a new line","STRING",addtoBlacklist),
-				new Page("Remove from Blacklist","Allows the user to remove from the Blacklist\nPlease place each prase/word to remove from the blacklist on a new line","STRING",removefromBlacklist)
+				new Page("Remove from Blacklist","Allows the user to remove from the Blacklist\nPlease place each prase/word to remove from the blacklist on a new line","STRING",removefromBlacklist),
+				new Page("Clear Blacklist","Removes all entries from the blacklist",null, clearBlacklist),
 			])
 		])
 		.run(msg,client)
@@ -36,7 +37,15 @@ module.exports = {
 };
 
 async function showBlacklist(client,msg){
-	return await msg.channel.send(`**__Current Blacklist for ${msg.guild.name}:__**\n${msg.guild.settings.globalBlacklist.map(e => e.peram).join("\n")}`)
+	return await msg.channel.send(`**__Current Blacklist for ${msg.guild.name}:__**\n${msg.guild.settings.blacklist.map(e => e.peram).join("\n")}`)
+}
+
+async function clearBlacklist(client,msg){
+	msg.guild.settings.blacklist = []
+	return await msg.guild.settings.save(async (err, newDoc)=>{
+		if (err) return errorHandeler(error,client,msg)
+		return await msg.channel.send(`Cleared blacklist`)
+	});
 }
 
 async function addtoBlacklist(client,msg,result){
@@ -44,16 +53,16 @@ async function addtoBlacklist(client,msg,result){
 	var addedMessage = ""
 	toAdd.forEach(async string => {
 		let object = {regex:false,peram:string.toLowerCase()}
-		if(msg.guild.settings.globalBlacklist.map(e => e.peram).includes(object.peram)){
+		if(msg.guild.settings.blacklist.map(e => e.peram).includes(object.peram)){
 			addedMessage += `${string} is already on the blacklist!\n`
 			return 
 		} else {
-		msg.guild.settings.globalBlacklist.push(object)
+		msg.guild.settings.blacklist.push(object)
 		addedMessage += `${string} has been added to the blacklist!\n`
 		}
 	});
 	return await msg.guild.settings.save(async (err, newDoc)=>{
-		if (err) return errorHandeler(err,client,msg)
+		if (err) return errorHandeler(error,client,msg)
 		return await msg.channel.send(addedMessage)
 	});
 }
@@ -63,11 +72,11 @@ async function removefromBlacklist(client,msg,result){
 	var removedMessage = ""
 	toRemove.forEach(async string => {
 		object = {regex:false,peram:string.toLowerCase()}
-		if(!msg.guild.settings.globalBlacklist.map(e => e.peram).includes(object.peram)){
+		if(!msg.guild.settings.blacklist.map(e => e.peram).includes(object.peram)){
 			return removedMessage += `${string} is not on the blacklist!\n`
 		}
-		let index = msg.guild.settings.globalBlacklist.map(e => e.peram).indexOf(object.peram)
-		msg.guild.settings.globalBlacklist.splice(index,1)
+		let index = msg.guild.settings.blacklist.map(e => e.peram).indexOf(object.peram)
+		msg.guild.settings.blacklist.splice(index,1)
 		return removedMessage += `${string} has been removed from the global blacklist!\n`	
 	});
 	return await msg.guild.settings.save(async (err, newDoc)=>{

@@ -1,8 +1,14 @@
 const Discord = require('discord.js');
 
 module.exports.execute = async (client, msg) => {
-    if(await msg.member.permissions.has(["MANAGE_MESSAGES"])) return
-    msg.guild.settings.globalBlacklist.forEach(async element => {
+    // if(await msg.member.permissions.has(["MANAGE_MESSAGES"])) return
+    let blacklist;
+    if(msg.channel.settings.enableBlacklist){
+        blacklist = msg.channel.settings.blacklist
+    } else {
+        blacklist = msg.guild.settings.blacklist
+    }
+    blacklist.forEach(async element => {
         let e = element.peram
         if(msg.content.includes(e)){
             await msg.delete()
@@ -22,16 +28,18 @@ module.exports.execute = async (client, msg) => {
         }
 
     });
-    if(msg.guild.settings.antiCaps < 1 && msg.content.match(/[A-Z]/g)){
+    //Anti Caps
+    let antiCaps = msg.channel.settings.antiCaps<0 ? msg.guild.settings.antiCaps : msg.channel.settings.antiCaps
+    if(antiCaps < 1 && msg.content.match(/[A-Z]/g)){
         let msgpercent = msg.content.match(/[A-Z]/g).length/msg.content.match(/[\S+]/g).length
-        if(msgpercent < msg.guild.settings.antiCaps) return
+        if(msgpercent < antiCaps) return
         msg.delete()
-        await msg.author.send(`Your message was deleted because it contained more then ${msg.guild.settings.antiCaps*100}% capital letters. Your message was ${msgpercent*100}% capitals\n>>> ${msg.content}`)
+        await msg.author.send(`Your message was deleted because it contained more then ${antiCaps*100}% capital letters. Your message was ${msgpercent*100}% capitals\n>>> ${msg.content}`)
         if(msg.guild.settings.alertChannel){
             let embed = new Discord.RichEmbed()
                 .setAuthor(msg.author.tag,msg.author.displayAvatarURL)
                 .setColor(client.config.colours.heavy)
-                .setDescription(`Message deleted due to exceding max caps percent (${msgpercent*100}% is more then max of ${msg.guild.settings.antiCaps*100}%).\n>>> ${msg.content}`)
+                .setDescription(`Message deleted due to exceding max caps percent (${msgpercent*100}% is more then max of ${antiCaps*100}%).\n>>> ${msg.content}`)
                 .setFooter(`User ID: ${msg.author.id}`)
             await client.channels.get(msg.guild.settings.alertChannel).send(embed)
         }
