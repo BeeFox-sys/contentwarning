@@ -1,8 +1,9 @@
 module.exports.Menu = class Menu{
-    constructor(name, description, pages, timeout = 60){
+    constructor(name, description, pages, previous, timeout = 60){
         this._name = name //String
         this._description = description //String
         this._pages = pages //Array
+        this._previous = previous
         this._timeout = timeout
     }
 
@@ -18,26 +19,48 @@ module.exports.Menu = class Menu{
         if(!(pages instanceof Array)) throw TypeError("Pages must be Array")
         this._pages = pages
     }
+    set previous(previous){
+        // if(!(pages instanceof module.exports.Menu)) throw TypeError("Previous must be a Menu!")
+        this._previous = previous
+    }
+    set timeout(time){
+        if(Number.isNaN(time))  throw TypeError("Timeout must be Number!")
+        this._timeout = time
+    }
+
+    get name(){return this._name}
+    get description(){return this._description}
+    get pages(){return this._pages}
+    get previous(){return this._previous}
+    get timeout(){return this._timeout}
+
 
     run(message,client){
         return new Promise(async (resolve, reject)=>{
             let menu = "";
-            if(this._name) menu+=`**${this._name}**\n`
-            if(this._description) menu+=`${this._description}\n`
+            if(this.name) menu+=`**${this.name}**\n`
+            if(this.description) menu+=`${this.description}\n`
             menu +="```md\n"
-            this._pages.forEach((page, count)=>{
-                menu += `[${count+1}]: ${page._name}${page._description ? `\n# ${page._description.split("\n")[0]}` :""}\n`
+            this.pages.forEach((page, count)=>{
+                menu += `[${count+1}]: ${page.name}${page.description ? `\n# ${page.description.split("\n")[0]}` :""}\n`
+                if(page instanceof module.exports.Menu){
+                    page.previous = this
+                }
             })
-            menu += "\n[0]: Cancel```"
+            if(!this.previous)menu += "\n[0]: Cancel```"
+            else menu += "\n[0]: Return```"
             await message.channel.send(menu)
-            await message.channel.awaitMessages((message=>message.author.id===message.author.id),{ time: this._timeout*1000, max: 1, errors: ['time'] })
+            await message.channel.awaitMessages((message=>message.author.id===message.author.id),{ time: this.timeout*1000, max: 1, errors: ['time'] })
             .then(async response => {
                 let select;
                 select = response.first().content.toLowerCase()
-                if(select == 0 || select == "cancel") reject("Canceled")
+                if(select == 0 || select == "cancel" || select == "return"){ 
+                    if(!this.previous) reject("Canceled")
+                    resolve(this.previous.run(message,client))
+                }
                 let page;
-                if(!isNaN(select) && select < this._pages.length+1) page = this._pages[select-1]
-                if(!page) page = this._pages.find(page => page._name.toLowerCase() == select)
+                if(!isNaN(select) && select < this.pages.length+1) page = this.pages[select-1]
+                if(!page) page = this.pages.find(page => page.name.toLowerCase() == select)
                 if(!page) reject("Invalid Option")
                 resolve(await page.run(message,client))
             })
@@ -82,32 +105,38 @@ module.exports.Page = class Page{
         this._timeout = timeout
     }
 
+    get name(){return this._name}
+    get description(){return this._description}
+    get type(){return this._type}
+    get callback(){return this._callback}
+    get timeout(){return this._timeout}
+
     async run(message, client){
-        switch(this._type){
+        switch(this.type){
                 case "BOOLEAN":
-                    return await this._callback(client, message, await this.boolean(message.channel, message.author))
+                    return await this.callback(client, message, await this.boolean(message.channel, message.author))
                 case "STRING":
-                    return await this._callback(client,message,await this.string(message.channel,message.author))
+                    return await this.callback(client,message,await this.string(message.channel,message.author))
 
                 case "CHANNEL":
-                    return await this._callback(client,message,await this.channel(message.channel,message.author))
+                    return await this.callback(client,message,await this.channel(message.channel,message.author))
 
                 case "ROLE":
-                    return await this._callback(client,message,await this.role(message.channel,message.author))
+                    return await this.callback(client,message,await this.role(message.channel,message.author))
 
                 case "NONE":
                 default:
-                    return await this._callback(client,message)
+                    return await this.callback(client,message)
             }
     }
 
     boolean(channel, author){
        return new Promise(async (resolve, reject)=>{
         let message;
-        message = await channel.send(`**${this._name}**\n${this._description || ""}`)
+        message = await channel.send(`**${this.name}**\n${this.description || ""}`)
         await message.react("✅")
         await message.react("❌")
-        await message.awaitReactions((reaction, user)=>{return (user.id==author.id&&(reaction.emoji.name == "✅"||reaction.emoji.name == "❌"))}, { time: this._timeout*1000, max: 1, errors: ['time'] })
+        await message.awaitReactions((reaction, user)=>{return (user.id==author.id&&(reaction.emoji.name == "✅"||reaction.emoji.name == "❌"))}, { time: this.timeout*1000, max: 1, errors: ['time'] })
                 .then(async response => {
                     switch (response.first().emoji.name) {
                         case "✅":
@@ -128,8 +157,8 @@ module.exports.Page = class Page{
     }
     string(channel, author){
         return new Promise(async (resolve, reject)=>{
-            channel.send(`**${this._name}**\n${this._description || ""}`)
-            await channel.awaitMessages(message=>message.author.id===author.id, { time: this._timeout*1000, max: 1, errors: ['time'] })
+            channel.send(`**${this.name}**\n${this.description || ""}`)
+            await channel.awaitMessages(message=>message.author.id===author.id, { time: this.timeout*1000, max: 1, errors: ['time'] })
 			.then(async response => {
                 resolve(response.first().content)
 			})
@@ -142,11 +171,13 @@ module.exports.Page = class Page{
     }
     channel(channel, author){
         return new Promise(async (resolve,reject)=>{
-            channel.send(`**${this._name}**\n${this._description}`)
+            channel.send(`**${this.name}**\n${this.description}`)
             await channel.awaitMessages(message=>message.author.id===author.id, { time: 60000, max: 1, errors: ['time'] })
 			.then(async response => {
             let channelRes;
             channelRes = await response.first().mentions.channels.first()
+            if(channelRes == undefined) channelRes = await channel.guild.channels.get(response.first().content)
+            if(channelRes == undefined) channelRes = await channel.guild.channels.find(val => val.name.toLowerCase()==response.first().content.toLowerCase())
             if(channelRes == undefined) resolve(response.first().content)
             resolve(channelRes)
 			})
@@ -159,7 +190,7 @@ module.exports.Page = class Page{
     }
     role(channel, author){
         return new Promise(async (resolve,reject)=>{
-            channel.send(`**${this._name}**\n${this._description}`)
+            channel.send(`**${this.name}**\n${this.description}`)
             await channel.awaitMessages(message=>message.author.id===author.id, { time: 60000, max: 1, errors: ['time'] })
 			.then(async response => {
             let role;
