@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 
 module.exports.execute = async (client, msg) => {
-    // if(await msg.member.permissions.has(["MANAGE_MESSAGES"])) return
+    if(await msg.member.permissions.has(["MANAGE_MESSAGES"])) return
     let blacklist;
     if(msg.channel.settings.enableBlacklist){
         blacklist = msg.channel.settings.blacklist
