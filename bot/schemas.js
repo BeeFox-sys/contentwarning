@@ -8,6 +8,7 @@ module.exports = {
     prefix: { type: String, default: config.defaultPrefix },
     channel: String,
     alertChannel: String,
+    levelRoles: Map,
     hideCW: { type: Boolean, default:true},
     allowAnon: { type: Boolean, default:true},
     enableFilter: Boolean,

@@ -16,6 +16,18 @@ module.exports.execute = async (client, msg) => {
     if(data.level > prevlvl){
         msg.channel.send(`Congrats <@!${msg.member.id}>, You have leveled up to level ${data.level}!`)
     }
+    if(msg.guild.settings.levelRoles){
+        if(msg.guild.settings.levelRoles.has(data.level.toString())){
+        if(!msg.member.roles.has(
+            msg.guild.settings.levelRoles.get(data.level.toString())
+        )){
+            if(!msg.guild.me.permissions.has("MANAGE_ROLES"))return msg.channel.send("I need to be able to manage roles to reward users!")
+            msg.member.addRole(msg.guild.settings.levelRoles.get(data.level.toString()))
+                .catch(async (error)=>{
+                    msg.guild.settings.levelRoles.delete(data.level.toString())
+                    await msg.guild.settings.save()
+                })
+        }}}
 }
 
 var add_minutes =  function (dt, minutes) {

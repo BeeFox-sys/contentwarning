@@ -3,7 +3,7 @@ const { errorHandler, getProfile } = require('../../utils')
 
 module.exports = {
 	name: 'profile',
-	aliases: null,
+	aliases: ['level','xp'],
 	description: 'Responds to the user',
     hidden: false,
 	userPerms: null,
