@@ -100,7 +100,7 @@ client
 
             if(!command){
                 if(msg.channel.type != 'text') return await msg.channel.send("I didn't recognise that command. You don't need to use a prefix here! Just type help for a list of commands")
-                let react = await msg.react('⚠').catch((err)=>utils.errorHandeler(error,client,msg))
+                let react = await msg.react('⚠').catch((err)=>utils.errorHandeler(err,client,msg))
                 return await msg.awaitReactions((reaction, user) => reaction.emoji.name === '⚠' &user.id === msg.author.id,{ time: 15000, max: 1, errors: ['time'] })
                 .then(async ()=>{
                     await react.remove()
