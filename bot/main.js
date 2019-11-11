@@ -40,19 +40,17 @@ function readFiles(cdir){
 }
 const blacklist = require('./blacklist.js')
 const levels = require('./levels.js')
+const channelPurge = require("./channelpurge.js")
 
 client
     .on('ready', async () => {
         console.log(`Logged in as ${client.user.tag} (ID: ${client.user.id})!`);
         console.log(`${client.guilds.size} servers`);
         // console.warn(`${client.shard.count} shards`); // for future use once sharding becomes necessary
-        await setPresence()
-        client.setInterval(()=>{
-            setPresence()
-        },60*60*1000)
         client.mentionPrefix= new RegExp(`^<@!?${client.user.id}>`,"gi")
         client.channels.get(client.config.logChannel).send("Started Successfully!")
     })
+    
     .on('reconnecting', () => {
         console.warn("Lost connection to the Discord gateway!\nAttempting to resume the websocket connection...")
     })
@@ -151,6 +149,11 @@ client
 			if (err) return errorHandler(err,msg)
 		})
 });
+
+client.setInterval(()=>{
+    setPresence()
+    channelPurge(client)
+},60*60*1000)
 
 client.login(client.config.token);
 

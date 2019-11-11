@@ -13,6 +13,7 @@ module.exports = {
 	async execute(client, msg, args) {
 		return await new Menu("Automod Channel-level Settings","These settings will onny effect the channel this is used in.",[
 			new Page("Anti-caps spam",`Allows you to set a percentage limit on how much of a message is capital letters. Currently ${msg.channel.settings.antiCaps>0 ? msg.channel.settings.antiCaps*100+"%":"Server Override"}\nPlease input a number between 0% and 100%, or \`disable\` to use server setting`,"STRING", capsPercent),
+			new Page("Purge Channel",`Purges the channel every x hours, currently: ${msg.channel.settings.purge.max ? msg.channel.settings.purge.max+" Hours":"Disabled"}\nInput a number between 1 hour and 336 hours(2 weeks), or type "Disable" to disable it`,"STRING",setPurge),
 			new Menu("Blacklist Settings","Controls the blacklist settings\nIf blacklist is enabled, it will completely override the server blacklist",[
 				new Page("Enable Balcklist",`Enables/Disables the channel overrides for the blacklist. Currently ${msg.channel.settings.enableBlacklist ? "Enabled" : "Disabled"}`,"BOOLEAN", enableBlacklist),
 				new Page("Current Blacklist","Returns the current blacklist",null, showBlacklist),
@@ -120,3 +121,23 @@ async function capsPercent(client,msg,result){
 			return msg.channel.send(`Max caps per message set to ${newDoc.antiCaps*100}%`)
 		})
 }
+
+async function setPurge(client,msg,result){
+	if(result.toLowerCase() == "disable"){
+		msg.channel.settings.purge.max = -1
+		msg.channel.settings.purge.current = -1
+		return msg.channel.settings.save((err, newDoc)=>{
+			if (err) return errorHandeler(err,client,msg)
+			return msg.channel.send(`Disabled channel purge`)
+		})
+	}
+	let number = Number.parseFloat(result.match(/\d{1,3}/))
+		if(Number.isNaN(number) || (number < 1 || number > 336)) return msg.channel.send("I wasnt able to turn that into a number! Please put a number of hours between 1 and 336")
+		msg.channel.settings.purge.max = number
+		msg.channel.settings.purge.current = number
+		msg.channel.settings.save((err, newDoc)=>{
+			if (err) return errorHandeler(err,client,msg)
+			return msg.channel.send(`Purging channel every ${msg.channel.settings.purge.max} hour, starting from now`)
+		})
+}
+

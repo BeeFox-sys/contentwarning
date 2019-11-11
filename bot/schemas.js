@@ -21,7 +21,11 @@ module.exports = {
     antiCaps: {type:Number,default:-1},
     enableBlacklist: {type:Boolean,default:false},
     blacklist: [{regex:Boolean,peram:String}],
-    enableLevels: {type:Boolean,default:true}
+    enableLevels: {type:Boolean,default:true},
+    purge: {
+      max: Number,
+      current: Number
+    }
   }),
   user: new mongoose.Schema({
     _id: String,
